@@ -1,7 +1,8 @@
 package models
 
 type Game struct {
-	Name     string `json:"name"`
+	ID       int    `json:"id"`
+	Title    string `json:"title"`
 	Platform string `json:"platform"`
-	Gender   string `json:"gender"`
+	Genre    string `json:"genre"`
 }

@@ -12,7 +12,7 @@ func init() {
 	viper.SetDefault("api.port", "8080")
 }
 
-func load() error {
+func Load() error {
 	viper.SetConfigName("api")
 	viper.SetConfigType("config")
 	viper.AddConfigPath(".")

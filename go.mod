@@ -1,8 +1,11 @@
 module github.com/caribeh/apijogos
 
-go 1.20
+go 1.18
 
-require github.com/spf13/viper v1.16.0
+require (
+	github.com/gorilla/mux v1.8.0
+	github.com/spf13/viper v1.16.0
+)
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
