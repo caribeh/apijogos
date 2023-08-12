@@ -81,6 +81,14 @@ resource "aws_ecs_task_definition" "caribeh" {
       containerPort = 80
       hostPort      = 80
     }]
+    log_configuration = {
+      log_driver = "awslogs"
+      options = {
+        "awslogs-group" = "/ecs/production/apijogos"
+        "awslogs-region" = "us-west-1"
+        "awslogs-stream-prefix" = "apijogos"
+      }
+    }
   }])
 }
 
@@ -104,6 +112,7 @@ resource "aws_ecs_service" "caribeh" {
   cluster         = aws_ecs_cluster.caribeh.id
   task_definition = aws_ecs_task_definition.caribeh.arn
   launch_type     = "FARGATE"
+  desired_count   = 1
   
   network_configuration {
     subnets = var.subnets
