@@ -29,9 +29,15 @@ func main() {
 	router.HandleFunc("/games", addGame).Methods("POST")
 	router.HandleFunc("/games/{id}", updateGame).Methods("PUT")
 	router.HandleFunc("/games/{id}", deleteGame).Methods("DELETE")
+	router.HandleFunc("/healthcheck", healthCheck)
 
-	fmt.Println("Server started at :8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	fmt.Println("API Jogos rodando na porta :80")
+	log.Fatal(http.ListenAndServe(":80", router))
+}
+
+func healthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Healthy")
 }
 
 func getGames(w http.ResponseWriter, r *http.Request) {
