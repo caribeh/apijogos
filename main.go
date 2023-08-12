@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/caribeh/apijogos/models"
@@ -15,6 +16,12 @@ var games []models.Game
 var currentID int
 
 func main() {
+
+	err := ReadGamesFromFile("games.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/games", getGames).Methods("GET")
@@ -117,4 +124,33 @@ func deleteGame(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.NotFound(w, r)
+}
+
+func ReadGamesFromFile(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	var newGames []models.Game
+	err = json.NewDecoder(file).Decode(&newGames)
+	if err != nil {
+		return err
+	}
+
+	lastID := 0
+	for _, game := range games {
+		if game.ID > lastID {
+			lastID = game.ID
+		}
+	}
+
+	for i := range newGames {
+		lastID++
+		newGames[i].ID = lastID
+		games = append(games, newGames[i])
+	}
+
+	return nil
 }

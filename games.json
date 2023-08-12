@@ -1,0 +1,62 @@
+[
+    {
+      "title": "Diablo IV",
+      "platform": "Xbox",
+      "genre": "ARPG"
+    },
+    {
+      "title": "Fifa 2023",
+      "platform": "Xbox",
+      "genre": "Sports"
+    },
+    {
+        "title": "The Last Of Us",
+        "platform": "PS4",
+        "genre": "Drama"
+      },
+      {
+        "title": "Days Gone",
+        "platform": "PS4",
+        "genre": "Adventure"
+      },
+      {
+        "title": "Zelda - Breath Of The Wild",
+        "platform": "Switch",
+        "genre": "Adventure"
+      },
+      {
+        "title": "Zelda - Tears Of The Kingdom",
+        "platform": "Switch",
+        "genre": "Adventure"
+      },
+      {
+        "title": "God Of War",
+        "platform": "PS4",
+        "genre": "Adventure"
+      },
+      {
+        "title": "God Of War - Ragnarok",
+        "platform": "PS4",
+        "genre": "Adventure"
+      },
+      {
+        "title": "Resident Evil",
+        "platform": "Xbox",
+        "genre": "Surviving Horror"
+      },
+      {
+        "title": "Resident Evil 2",
+        "platform": "Xbox",
+        "genre": "Surviving Horror"
+      },
+      {
+        "title": "Resident Evil 3",
+        "platform": "Xbox",
+        "genre": "Surviving Horror"
+      },
+      {
+        "title": "Resident Evil 4",
+        "platform": "Xbox",
+        "genre": "Surviving Horror"
+      }
+  ]
