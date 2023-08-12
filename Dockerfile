@@ -8,7 +8,6 @@ ENV GO111MODULE=on \
 WORKDIR /build
 
 COPY . .
-COPY games.json .
 
 RUN go mod download
 RUN go build -o app .
@@ -16,6 +15,7 @@ RUN go build -o app .
 FROM alpine:latest
 
 COPY --from=builder /build/app /app
+COPY --from=builder /build/games.json /games.json
 
 EXPOSE 8080
 
