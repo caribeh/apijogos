@@ -30,5 +30,5 @@ jobs:
       run: |
         docker build -t apijogos .
         echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-        docker tag apijogos $DOCKER_USERNAME/nome-da-sua-imagem:latest
+        docker tag $DOCKER_USERNAME/apijogos:latest
         docker push $DOCKER_USERNAME/apijogos:latest
