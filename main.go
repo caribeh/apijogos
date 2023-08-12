@@ -17,7 +17,7 @@ var currentID int
 
 func main() {
 
-	err := ReadGamesFromFile("games.json")
+	err := ReadGamesFromFile("./games.json")
 	if err != nil {
 		log.Fatal(err)
 	}
