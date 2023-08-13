@@ -1,6 +1,5 @@
 resource "aws_security_group" "caribeh" {
   name_prefix = "caribehsg-"
-  
   vpc_id = var.vpc
 
   egress {
@@ -11,8 +10,8 @@ resource "aws_security_group" "caribeh" {
   }
 
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -22,9 +21,8 @@ resource "aws_lb" "caribeh" {
   name               = "caribeh-loadbalancer"
   internal           = false
   load_balancer_type = "application"
-  
   enable_deletion_protection = false
-
+  security_groups   = [aws_security_group.caribeh.id]
   subnets = var.subnets
 }
 
@@ -44,13 +42,6 @@ resource "aws_lb_target_group" "caribeh" {
       port                = "80"
   }
 }
-
-resource "aws_lb_target_group_attachment" "caribeh" {
-  target_group_arn = aws_lb_target_group.caribeh.arn
-  target_id        = aws_ecs_service.caribeh.id
-  port             = 80
-}
-
 resource "aws_lb_listener" "caribeh" {
    load_balancer_arn    = aws_lb.caribeh.arn
    port                 = "80"
@@ -62,9 +53,13 @@ resource "aws_lb_listener" "caribeh" {
 }
 
 resource "aws_ecs_cluster" "caribeh" {
-  name = "production-apijogos"
+  name = "ecs-production-API"
 }
 
+
+resource "aws_cloudwatch_log_group" "ecs_logs" {
+  name = "ecs/production/apijogos"
+}
 resource "aws_ecs_task_definition" "caribeh" {
   family                   = "production-apijogos"
   network_mode             = "awsvpc"
@@ -84,7 +79,7 @@ resource "aws_ecs_task_definition" "caribeh" {
     log_configuration = {
       log_driver = "awslogs"
       options = {
-        "awslogs-group" = "/ecs/production/apijogos"
+        "awslogs-group" = aws_cloudwatch_log_group.ecs_logs.name
         "awslogs-region" = "us-west-1"
         "awslogs-stream-prefix" = "apijogos"
       }
