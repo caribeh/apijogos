@@ -23,7 +23,6 @@ jobs:
         go build -o app .
         go test -v ./...
 
-
     - name: Docker Build and Push
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -34,6 +33,18 @@ jobs:
         docker tag apijogos:latest $DOCKER_USERNAME/apijogos:latest
         docker push $DOCKER_USERNAME/apijogos:latest
 
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and push Docker image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: apijogos
+      run:
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+  
   CD:
     needs: CI
     runs-on: ubuntu-latest
