@@ -105,7 +105,6 @@ resource "aws_ecs_cluster" "caribeh" {
   name = "ecs-production-API"
 }
 
-
 resource "aws_cloudwatch_log_group" "ecs_logs" {
   name = "ecs/production/apijogos"
 }
@@ -121,7 +120,7 @@ resource "aws_ecs_task_definition" "caribeh" {
 
   container_definitions = jsonencode([{
     name  = "apijogos"
-    image = "caribeh/apijogos:latest"
+    image = "public.ecr.aws/z1l9l6y3/apijogos:latest"
     portMappings = [{
       containerPort = 80
       hostPort      = 80
@@ -130,7 +129,7 @@ resource "aws_ecs_task_definition" "caribeh" {
       log_driver = "awslogs"
       options = {
         "awslogs-group" = aws_cloudwatch_log_group.ecs_logs.name
-        "awslogs-region" = "us-west-1"
+        "awslogs-region" = "us-east-1"
         "awslogs-stream-prefix" = "apijogos"
       }
     }
