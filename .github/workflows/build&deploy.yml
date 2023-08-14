@@ -6,37 +6,41 @@ on:
       - main 
 
 jobs:
-  CI-ECR:
+  CI:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
-        
+
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.8
-        
+        go-version: 1.18
+
     - name: Build
       run: |
         go build -o app .
-     
+
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-    - name: Build and push Docker image to Amazon ECR
+
+    - name: Docker Build and Push
       env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: apijogos
-        IMAGE_TAG: latest
       run: |
         docker build -t apijogos .
+        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        docker tag apijogos:latest $DOCKER_USERNAME/apijogos:latest
+        docker push $DOCKER_USERNAME/apijogos:latest
         docker tag apijogos:latest public.ecr.aws/z1l9l6y3/apijogos:latest
         docker push public.ecr.aws/z1l9l6y3/apijogos:latest
-
-
   CD:
-    needs: CI-ECR
+    needs: CI
     runs-on: ubuntu-latest
 
     steps:
