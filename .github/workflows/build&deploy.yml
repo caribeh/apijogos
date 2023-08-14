@@ -27,7 +27,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: sa-east-1
+        aws-region: us-east-1
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -44,10 +44,6 @@ jobs:
         docker push $DOCKER_USERNAME/apijogos:latest
 
     - name: Docker Build and Push ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: apijogos
-        IMAGE_TAG: latest
       run: |
         docker build -t apijogos .
         docker tag apijogos:latest public.ecr.aws/z1l9l6y3/apijogos:latest
