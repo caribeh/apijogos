@@ -57,8 +57,9 @@ jobs:
         ECR_REPOSITORY: apijogos
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker build -t apijogos .
+        docker tag apijogos:latest public.ecr.aws/z1l9l6y3/apijogos:latest
+        docker push public.ecr.aws/z1l9l6y3/apijogos:latest
 
 
   CD:
