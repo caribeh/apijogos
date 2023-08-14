@@ -23,7 +23,6 @@ func main() {
 	}
 
 	router := mux.NewRouter()
-
 	router.HandleFunc("/games", getGames).Methods("GET")
 	router.HandleFunc("/games/{id}", getGame).Methods("GET")
 	router.HandleFunc("/games", addGame).Methods("POST")
@@ -39,6 +38,16 @@ func healthCheck(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Healthy")
 }
+
+// @Summary Adicionar um novo jogo
+// @Description Adiciona um novo jogo à lista de jogos
+// @Tags Jogos
+// @Accept json
+// @Produce json
+// @Param game body Game true "Dados do jogo a ser adicionado"
+// @Success 201 {object} Game
+// @Failure 400 {object} ErrorResponse
+// @Router /games [post]
 
 func getGames(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
