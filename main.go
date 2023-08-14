@@ -75,6 +75,13 @@ func addGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	for _, existingGame := range games {
+		if existingGame.Title == newGame.Title {
+			http.Error(w, "Game with the same name already exists", http.StatusBadRequest)
+			return
+		}
+	}
+
 	newGame.ID = currentID
 	currentID++
 	games = append(games, newGame)
