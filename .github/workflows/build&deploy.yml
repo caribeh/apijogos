@@ -49,8 +49,10 @@ jobs:
         ECR_REPOSITORY: apijogos
         IMAGE_TAG: latest
       run: |
-        docker build -t caribeh/apijogos:latest .
-        docker push caribeh/apijogos:latest
+        docker build -t apijogos .
+        docker tag apijogos:latest public.ecr.aws/z1l9l6y3/apijogos:latest
+        docker push public.ecr.aws/z1l9l6y3/apijogos:latest
+
   CD:
     needs: CI
     runs-on: ubuntu-latest
