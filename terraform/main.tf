@@ -17,6 +17,55 @@ resource "aws_security_group" "caribeh" {
   }
 }
 
+resource "aws_iam_role" "ecs_role_caribeh" {
+  name = "ecs_role_caribeh"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_policy_attachment" "ecs_role_caribeh_attachment" {
+  name       = "ecs_role_caribeh_attachment"
+  roles      = [aws_iam_role.ecs_role_caribeh.name]
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+resource "aws_iam_policy" "ecs_role_kms_secrets_policy" {
+  name        = "ecs_role_kms_secrets_policy"
+  description = "Policy to allow KMS decryption and Secrets Manager access"
+  
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action   = ["kms:Decrypt"],
+        Effect   = "Allow",
+        Resource = "arn:aws:kms:sa-east-1:843483553744:key/3d033b86-c6d5-4ae4-b4ff-2530a4e32588"
+      },
+      {
+        Action   = ["secretsmanager:GetSecretValue"],
+        Effect   = "Allow",
+        Resource = "arn:aws:secretsmanager:sa-east-1:843483553744:secret:dev/DockerHubSecret-ODCkuR"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_role_kms_secrets_attachment" {
+  policy_arn = aws_iam_policy.ecs_role_kms_secrets_policy.arn
+  role       = aws_iam_role.ecs_role_caribeh.name
+}
+
+
 resource "aws_lb" "caribeh" {
   name               = "caribeh-loadbalancer"
   internal           = false
@@ -67,8 +116,9 @@ resource "aws_ecs_task_definition" "caribeh" {
   cpu                      = "256"
   memory                   = "512"
   
-  execution_role_arn = aws_iam_role.ecs_execution_role.arn
-  
+  execution_role_arn = aws_iam_role.ecs_role_caribeh.arn
+  task_role_arn      = aws_iam_role.ecs_role_caribeh.arn
+
   container_definitions = jsonencode([{
     name  = "apijogos"
     image = "caribeh/apijogos:latest"
@@ -87,21 +137,6 @@ resource "aws_ecs_task_definition" "caribeh" {
   }])
 }
 
-resource "aws_iam_role" "ecs_execution_role" {
-  name = "ecs_execution_role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRole",
-      Effect = "Allow",
-      Principal = {
-        Service = "ecs-tasks.amazonaws.com"
-      }
-    }]
-  })
-}
-
 resource "aws_ecs_service" "caribeh" {
   name            = "production-apijogos-service"
   cluster         = aws_ecs_cluster.caribeh.id
@@ -111,6 +146,7 @@ resource "aws_ecs_service" "caribeh" {
   
   network_configuration {
     subnets = var.subnets
+    security_groups   = [aws_security_group.caribeh.id]
   }
 
   load_balancer {
