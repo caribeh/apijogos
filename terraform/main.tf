@@ -39,32 +39,6 @@ resource "aws_iam_policy_attachment" "ecs_role_caribeh_attachment" {
   roles      = [aws_iam_role.ecs_role_caribeh.name]
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
-resource "aws_iam_policy" "ecs_role_kms_secrets_policy" {
-  name        = "ecs_role_kms_secrets_policy"
-  description = "Policy to allow KMS decryption and Secrets Manager access"
-  
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action   = ["kms:Decrypt"],
-        Effect   = "Allow",
-        Resource = "arn:aws:kms:sa-east-1:843483553744:key/3d033b86-c6d5-4ae4-b4ff-2530a4e32588"
-      },
-      {
-        Action   = ["secretsmanager:GetSecretValue"],
-        Effect   = "Allow",
-        Resource = "arn:aws:secretsmanager:sa-east-1:843483553744:secret:dev/DockerHubSecret-ODCkuR"
-      }
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_role_kms_secrets_attachment" {
-  policy_arn = aws_iam_policy.ecs_role_kms_secrets_policy.arn
-  role       = aws_iam_role.ecs_role_caribeh.name
-}
-
 
 resource "aws_lb" "caribeh" {
   name               = "caribeh-loadbalancer"
@@ -120,7 +94,7 @@ resource "aws_ecs_task_definition" "caribeh" {
 
   container_definitions = jsonencode([{
     name  = "apijogos"
-    image = "843483553744.dkr.ecr.us-east-1.amazonaws.com/apijogos:latest"
+    image = "caribeh/apijogos:latest"
     portMappings = [{
       containerPort = 80
       hostPort      = 80
@@ -146,6 +120,7 @@ resource "aws_ecs_service" "caribeh" {
   network_configuration {
     subnets = var.subnets
     security_groups   = [aws_security_group.caribeh.id]
+    assign_public_ip = true
   }
 
   load_balancer {

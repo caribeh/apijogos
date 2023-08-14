@@ -1,9 +1,9 @@
 variable "subnets" {
     type = list
-    default = ["subnet-091509a1a169e1763","subnet-09ada9f84d2ac0b4d"]
+    default = ["subnet-007ccc2c0e1cf982d","subnet-0a9133a2978068b38","subnet-0f68529de74546972"]
 }
 
 variable "vpc" {
     type = string
-    default = "vpc-02a979a81f09859a7"
+    default = "vpc-09dc69c3a2d74c044"
 }
