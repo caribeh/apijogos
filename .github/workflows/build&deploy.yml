@@ -18,7 +18,7 @@ jobs:
       with:
         go-version: 1.18
 
-    - name: Build and Test
+    - name: Build
       run: |
         go build -o app .
 
@@ -34,6 +34,7 @@ jobs:
 
   
   CI-ECR:
+    needs: CI-DockeHub
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -44,7 +45,7 @@ jobs:
       with:
         go-version: 1.8
         
-    - name: Build the Go application
+    - name: Build
       run: go build -o app .
         
     - name: Login to Amazon ECR
@@ -61,7 +62,7 @@ jobs:
 
 
   CD:
-    needs: CI-DockeHub
+    needs: CI-ECR
     runs-on: ubuntu-latest
 
     steps:
