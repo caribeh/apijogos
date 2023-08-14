@@ -22,15 +22,6 @@ jobs:
       run: |
         go build -o app .
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-
-
-
     - name: Docker Build and Push DockerHub
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -40,22 +31,6 @@ jobs:
         echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
         docker tag apijogos:latest $DOCKER_USERNAME/apijogos:latest
         docker push $DOCKER_USERNAME/apijogos:latest
-
-    - name: Login to Amazon ECR
-      id: login-ecr-private
-      uses: aws-actions/amazon-ecr-login@v1
-      with:
-        mask-password: 'true'
-        registry-type: private
-
-    - name: Docker Build and Push ECR
-      env: 
-        REGISTRY: ${{ steps.login-ecr-private.outputs.registry }}
-        REPOSITORY: apijogos
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
   CD:
     needs: CI
