@@ -29,9 +29,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+
 
     - name: Docker Build and Push DockerHub
       env:
@@ -43,11 +41,22 @@ jobs:
         docker tag apijogos:latest $DOCKER_USERNAME/apijogos:latest
         docker push $DOCKER_USERNAME/apijogos:latest
 
+    - name: Login to Amazon ECR
+      id: login-ecr-public
+      uses: aws-actions/amazon-ecr-login@v1
+      with:
+        mask-password: 'true'
+        registry-type: public
+
     - name: Docker Build and Push ECR
+      env: 
+        REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+        REGISTRY_ALIAS: z1l9l6y3
+        REPOSITORY: apijogos
+        IMAGE_TAG: latest
       run: |
-        docker build -t apijogos .
-        docker tag apijogos:latest public.ecr.aws/z1l9l6y3/apijogos:latest
-        docker push public.ecr.aws/z1l9l6y3/apijogos:latest
+        docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
   CD:
     needs: CI
