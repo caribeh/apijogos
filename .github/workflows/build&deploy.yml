@@ -39,13 +39,14 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: apijogos
+        IMAGE_TAG: latest
       run: |
         docker build -t apijogos .
         echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
         docker tag apijogos:latest $DOCKER_USERNAME/apijogos:latest
         docker push $DOCKER_USERNAME/apijogos:latest
-        docker tag apijogos:latest public.ecr.aws/z1l9l6y3/apijogos:latest
-        docker push public.ecr.aws/z1l9l6y3/apijogos:latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
   CD:
     needs: CI
     runs-on: ubuntu-latest
