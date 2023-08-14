@@ -120,7 +120,7 @@ resource "aws_ecs_task_definition" "caribeh" {
 
   container_definitions = jsonencode([{
     name  = "apijogos"
-    image = "public.ecr.aws/z1l9l6y3/apijogos:latest"
+    image = "843483553744.dkr.ecr.us-east-1.amazonaws.com/apijogos:latest"
     portMappings = [{
       containerPort = 80
       hostPort      = 80
